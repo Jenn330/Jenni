@@ -1,0 +1,203 @@
+irregular_verbs_cartoon_game.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Irregular Verbs Energy Game</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: linear-gradient(to right, #ffecd2, #fcb69f);
+        padding: 30px;
+    }
+    .container {
+        max-width: 520px;
+        margin: auto;
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        text-align: center;
+    }
+    h1 { margin-bottom: 5px; }
+    .cartoon {
+        font-size: 60px;
+        margin: 10px 0;
+        transition: transform 0.5s;
+    }
+    select, input, button {
+        width: 100%;
+        padding: 10px;
+        margin-top: 10px;
+        font-size: 16px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+    }
+    button {
+        background: #ff9800;
+        color: white;
+        border: none;
+        cursor: pointer;
+        font-size: 18px;
+    }
+    button:hover { background: #e68900; }
+    .stats {
+        display: flex;
+        justify-content: space-around;
+        margin-top: 15px;
+        font-weight: bold;
+    }
+    .energy-bar {
+        margin-top: 15px;
+        height: 25px;
+        background: #ddd;
+        border-radius: 12px;
+        overflow: hidden;
+    }
+    .energy-fill {
+        height: 100%;
+        width: 100%;
+        background: #4caf50;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 18px;
+        transition: width 0.5s;
+    }
+    .result { margin-top: 15px; font-size: 18px; min-height: 30px; }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🎯 Irregular Verbs Energy Game</h1>
+    <p>Learn English verbs with fun!</p>
+
+    <select id="level" onchange="startGame()">
+        <option value="easy">🟢 Easy</option>
+        <option value="medium">🟡 Medium</option>
+        <option value="hard">🔴 Hard</option>
+    </select>
+
+    <div class="stats">
+        <div>⭐ Score: <span id="score">0</span></div>
+        <div>🎯 Round: <span id="round">0</span></div>
+    </div>
+
+    <div class="energy-bar">
+        <div class="energy-fill" id="energy">💖💖💖</div>
+    </div>
+
+    <div class="cartoon" id="cartoon">🐵</div>
+
+    <h2>Base verb: <span id="baseVerb"></span></h2>
+
+    <input id="past" placeholder="Past simple">
+    <input id="participle" placeholder="Past participle">
+
+    <button onclick="checkAnswer()">Check Answer</button>
+
+    <div class="result" id="result"></div>
+</div>
+
+<script>
+const verbs = {
+    easy: {
+        go: ["went", "gone"],
+        eat: ["ate", "eaten"],
+        see: ["saw", "seen"]
+    },
+    medium: {
+        write: ["wrote", "written"],
+        take: ["took", "taken"],
+        speak: ["spoke", "spoken"]
+    },
+    hard: {
+        begin: ["began", "begun"],
+        choose: ["chose", "chosen"],
+        freeze: ["froze", "frozen"]
+    }
+};
+
+const happyEmojis = ["😄","🎉","🐶","🐱","🦊","🦄"];
+const sadEmojis = ["😢","🙈","😵"];
+
+let currentVerb = "";
+let score = 0;
+let round = 0;
+let attempts = 0;
+let maxEnergy = 3;
+let energy = maxEnergy;
+
+function startGame() {
+    score = 0;
+    round = 0;
+    energy = maxEnergy;
+    attempts = 0;
+    document.getElementById("score").textContent = score;
+    document.getElementById("round").textContent = round;
+    updateEnergyBar();
+    nextRound();
+}
+
+function nextRound() {
+    const level = document.getElementById("level").value;
+    const keys = Object.keys(verbs[level]);
+    currentVerb = keys[Math.floor(Math.random() * keys.length)];
+    round++;
+    attempts = 0;
+    document.getElementById("round").textContent = round;
+    document.getElementById("baseVerb").textContent = currentVerb;
+    document.getElementById("past").value = "";
+    document.getElementById("participle").value = "";
+    document.getElementById("result").textContent = "";
+    document.getElementById("cartoon").textContent = "🐵";
+    document.getElementById("cartoon").style.transform = "scale(1)";
+}
+
+function updateEnergyBar() {
+    let hearts = "💖".repeat(energy) + "🤍".repeat(maxEnergy - energy);
+    document.getElementById("energy").textContent = hearts;
+}
+
+function checkAnswer() {
+    const level = document.getElementById("level").value;
+    const past = document.getElementById("past").value.toLowerCase().trim();
+    const part = document.getElementById("participle").value.toLowerCase().trim();
+
+    attempts++;
+
+    if (past === verbs[level][currentVerb][0] &&
+        part === verbs[level][currentVerb][1]) {
+        score++;
+        document.getElementById("score").textContent = score;
+        document.getElementById("result").textContent = "✅ Correct! Great job!";
+        document.getElementById("cartoon").textContent = happyEmojis[Math.floor(Math.random()*happyEmojis.length)];
+        document.getElementById("cartoon").style.transform = "scale(1.5)";
+        setTimeout(nextRound, 1500);
+    } else {
+        if(attempts < 2){
+            document.getElementById("result").textContent = "⚠️ Try again!";
+            document.getElementById("cartoon").textContent = sadEmojis[Math.floor(Math.random()*sadEmojis.length)];
+            document.getElementById("cartoon").style.transform = "scale(0.9)";
+        } else {
+            energy--;
+            updateEnergyBar();
+            document.getElementById("result").textContent = `❌ Wrong! Correct: ${verbs[level][currentVerb][0]} / ${verbs[level][currentVerb][1]}`;
+            document.getElementById("cartoon").textContent = sadEmojis[Math.floor(Math.random()*sadEmojis.length)];
+            document.getElementById("cartoon").style.transform = "scale(0.8)";
+            setTimeout(nextRound, 1500);
+            if(energy <= 0){
+                alert(`Game Over! Your score: ${score}`);
+                startGame();
+            }
+        }
+    }
+}
+
+startGame();
+</script>
+
+</body>
+</html>
