@@ -1,0 +1,1 @@
+Is it difficult or remember Irregular Plurals in English? Don't worry. It's your time to remember them at your own pace through gamification. It consists of three levels as easy, intermediate and advanced. The leaners can try the answers three times which will help them to re learn through mistakes. 
